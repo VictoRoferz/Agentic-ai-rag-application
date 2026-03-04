@@ -1,0 +1,56 @@
+# ============================================================
+# Syte Knowledge Assistant - Python Dependencies
+# ============================================================
+# Install: pip install -r requirements.txt
+# Python: 3.11+
+# ============================================================
+
+# --- Core RAG Framework ---
+langchain>=0.3.0
+langchain-community>=0.3.0
+langchain-text-splitters>=0.3.0
+
+# --- Vector Database ---
+qdrant-client>=1.12.0
+
+# --- Document Parsing ---
+docling>=2.15.0               # Universal document parser (PDF, DOCX, PPTX)
+python-docx>=1.1.0            # DOCX fallback parser
+python-pptx>=1.0.0            # PPTX fallback parser
+pymupdf>=1.25.0               # PDF fallback parser (fast)
+unstructured[all-docs]>=0.16.0  # Alternative parser (optional)
+
+# --- Embedding Models ---
+sentence-transformers>=3.4.0   # Embedding model loading & inference
+torch>=2.4.0                   # PyTorch backend
+transformers>=4.48.0           # HuggingFace transformers
+
+# --- Reranking ---
+# Qwen3-Reranker runs via sentence-transformers or transformers
+# No extra dependency needed
+
+# --- LLM Clients ---
+anthropic>=0.42.0              # Claude API client
+openai>=1.60.0                 # OpenAI-compatible API (for local models via vLLM/Ollama)
+
+# --- Chat Interface ---
+chainlit>=2.2.0                # RAG-optimized chat UI
+# Alternative: streamlit>=1.41.0
+
+# --- Utilities ---
+pyyaml>=6.0                    # Config loading
+python-dotenv>=1.0.0           # Environment variables (.env)
+watchdog>=6.0.0                # File system watcher (auto-ingestion)
+rich>=13.9.0                   # Pretty terminal output
+tqdm>=4.67.0                   # Progress bars
+loguru>=0.7.0                  # Logging
+
+# --- Evaluation & Testing ---
+ragas>=0.2.0                   # RAG evaluation metrics (optional)
+pandas>=2.2.0                  # Data analysis for quality reports
+pytest>=8.3.0                  # Testing framework
+
+# --- FastAPI (optional, for API layer) ---
+fastapi>=0.115.0
+uvicorn>=0.32.0
+streamlit

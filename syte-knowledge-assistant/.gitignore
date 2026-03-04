@@ -1,0 +1,41 @@
+# Environment
+.env
+.venv/
+venv/
+env/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+
+# Data (don't commit documents)
+data/inbox/*
+data/indexed/*
+data/test/relevant/*
+data/test/distractors/*
+!data/**/.gitkeep
+
+# Logs
+logs/
+*.log
+
+# Model cache
+models/
+.cache/
+
+# Docker volumes
+qdrant_data/
+
+# Chainlit
+.chainlit/

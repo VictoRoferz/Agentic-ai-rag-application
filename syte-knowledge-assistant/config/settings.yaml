@@ -1,0 +1,155 @@
+# ============================================================
+# Syte Knowledge Assistant - Configuration
+# ============================================================
+# All model names, parameters, and settings in one place.
+# Change models/parameters here — code adapts automatically.
+# ============================================================
+
+project:
+  name: "Syte Knowledge Assistant"
+  version: "0.1.0"
+  language: "de"  # Primary language (de/en)
+
+# --- Qdrant Vector Database ---
+qdrant:
+  host: "localhost"
+  port: 6333
+  grpc_port: 6334
+  collection_name: "syte_knowledge_base"
+  # Vector config (must match embedding model output)
+  vector_size: 1024
+  distance: "Cosine"
+  # HNSW index parameters
+  hnsw_m: 16
+  hnsw_ef_construct: 100
+  # Enable sparse vectors for hybrid search
+  sparse_vectors: true
+  # Payload indexes for filtering
+  payload_indexes:
+    - field: "doc_name"
+      type: "keyword"
+    - field: "doc_type"
+      type: "keyword"
+    - field: "page_number"
+      type: "integer"
+    - field: "section_title"
+      type: "keyword"
+    - field: "is_distractor"
+      type: "bool"
+
+# --- Embedding Model ---
+embedding:
+  # Primary: Qwen3-Embedding-0.6B (SOTA multilingual, Apache 2.0)
+  model_name: "Qwen/Qwen3-Embedding-0.6B"
+  # Alternative: "BAAI/bge-m3"
+  dimension: 1024
+  max_tokens: 8192
+  batch_size: 32
+  device: "mps"  # "cpu", "cuda", "mps" (Apple Silicon)
+  # Instruction prefix for better retrieval (Qwen3 specific)
+  query_instruction: "Instruct: Given a query, retrieve relevant documents that help answer it.\nQuery: "
+  passage_instruction: ""
+
+# --- Reranker ---
+reranker:
+  enabled: true
+  # Primary: Qwen3-Reranker-0.6B (consistent with embedding ecosystem)
+  model_name: "Qwen/Qwen3-Reranker-0.6B"
+  # Alternative: "mixedbread-ai/mxbai-rerank-large-v2"
+  device: "mps"
+  top_n: 7  # Number of chunks after reranking (sent to LLM)
+
+# --- LLM (Generation) ---
+llm:
+  # Provider: "anthropic", "openai_compatible", "ollama"
+  #provider: "anthropic"
+  provider: "ollama"
+
+  # --- Anthropic (Claude) ---
+  anthropic:
+    model: "claude-sonnet-4-5-20250929"
+    max_tokens: 4096
+    temperature: 0.2  # Low for factual, citation-heavy output
+
+  # --- OpenAI-Compatible (for local models via vLLM, LM Studio, etc.) ---
+  openai_compatible:
+    base_url: "http://localhost:8000/v1"
+    model: "Qwen/Qwen3-30B-A3B-Instruct"
+    max_tokens: 4096
+    temperature: 0.2
+
+  # --- Ollama (easiest local setup) ---
+  ollama:
+    base_url: "http://localhost:11434"
+    model: "qwen3:30b"
+    max_tokens: 4096
+    temperature: 0.2
+
+# --- Document Ingestion ---
+ingestion:
+  # Supported formats
+  supported_formats:
+    - ".pdf"
+    - ".docx"
+    - ".pptx"
+  # Parser: "docling" (recommended) or "unstructured"
+  parser: "docling"
+  # Watch folder for auto-ingestion
+  watch_folder: "./data/inbox"
+  indexed_folder: "./data/indexed"
+  # Polling interval in seconds (if not using watchdog)
+  poll_interval: 300  # 5 minutes
+
+# --- Chunking ---
+chunking:
+  # Strategy: "recursive" (recommended), "semantic", "fixed"
+  strategy: "recursive"
+  chunk_size: 512        # tokens
+  chunk_overlap: 64      # tokens (~12%)
+  separators:
+    - "\n\n"
+    - "\n"
+    - ". "
+    - " "
+  # Add parent reference for future parent-child retrieval
+  store_parent_chunk: false
+  parent_chunk_size: 1024
+
+# --- Retrieval ---
+retrieval:
+  # Initial retrieval (before reranking)
+  top_k: 25
+  # Hybrid search weights
+  dense_weight: 0.7
+  sparse_weight: 0.3
+  # Score threshold (discard below)
+  score_threshold: 0.35
+  # MMR for diversity
+  mmr_enabled: true
+  mmr_lambda: 0.7  # 1.0 = pure relevance, 0.0 = pure diversity
+
+# --- Output Modes ---
+output:
+  # Output A: Narrative 1-pager
+  output_a:
+    max_words: 500
+    require_footnotes: true
+    require_source_marking: true  # [QUELLE] vs [TRANSFER]
+  # Output B: Prioritized source list
+  output_b:
+    max_sources: 20
+    include_reading_order: true
+    include_justification: true
+
+# --- Interface ---
+interface:
+  # "chainlit" or "streamlit"
+  type: "chainlit"
+  port: 8080
+  title: "Syte Knowledge Assistant"
+  description: "Suche und Zusammenfassung mit belastbaren Quellen"
+
+# --- Logging ---
+logging:
+  level: "INFO"  # DEBUG, INFO, WARNING, ERROR
+  file: "./logs/assistant.log"
