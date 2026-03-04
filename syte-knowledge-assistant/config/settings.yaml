@@ -63,7 +63,8 @@ reranker:
 llm:
   # Provider: "anthropic", "openai_compatible", "ollama"
   #provider: "anthropic"
-  provider: "ollama"
+  #provider: "ollama"
+  provider: "openai_compatible"
 
   # --- Anthropic (Claude) ---
   anthropic:
@@ -73,7 +74,8 @@ llm:
 
   # --- OpenAI-Compatible (for local models via vLLM, LM Studio, etc.) ---
   openai_compatible:
-    base_url: "http://localhost:8000/v1"
+    #base_url: "http://localhost:8000/v1"
+    base_url: "https://6351-35-198-248-106.ngrok-free.app/v1"
     model: "Qwen/Qwen3-30B-A3B-Instruct"
     max_tokens: 4096
     temperature: 0.2
