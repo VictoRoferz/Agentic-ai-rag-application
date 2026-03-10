@@ -42,6 +42,7 @@ class RerankerService:
             # Fix: Qwen3 tokenizer has no padding token
             if self._model.tokenizer.pad_token is None:
                 self._model.tokenizer.pad_token = self._model.tokenizer.eos_token
+                self._model.tokenizer.pad_token_id = self._model.tokenizer.eos_token_id
                 self._model.tokenizer.padding_side = "right"
             self._model_type = "cross_encoder"
             logger.info("Reranker loaded (CrossEncoder)")
